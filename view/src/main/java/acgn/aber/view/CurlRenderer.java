@@ -19,11 +19,15 @@ import javax.microedition.khronos.opengles.GL10;
 public class CurlRenderer implements GLSurfaceView.Renderer {
 
     // Constant for requesting left page rect.
+    @SuppressWarnings("WeakerAccess")
     public static final int PAGE_LEFT = 1;
     // Constant for requesting right page rect.
+    @SuppressWarnings("WeakerAccess")
     public static final int PAGE_RIGHT = 2;
     // Constants for changing view mode.
+    @SuppressWarnings("WeakerAccess")
     public static final int SHOW_ONE_PAGE = 1;
+    @SuppressWarnings("WeakerAccess")
     public static final int SHOW_TWO_PAGES = 2;
     // Set to true for checking quickly how perspective projection looks.
     private static final boolean USE_PERSPECTIVE_PROJECTION = false;
@@ -46,9 +50,10 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
     /**
      * Basic constructor.
      */
+    @SuppressWarnings("WeakerAccess")
     public CurlRenderer(CurlRenderer.Observer observer) {
         mObserver = observer;
-        mCurlMeshes = new Vector<CurlMesh>();
+        mCurlMeshes = new Vector<>();
         mPageRectLeft = new RectF();
         mPageRectRight = new RectF();
     }
@@ -56,6 +61,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
     /**
      * Adds CurlMesh to this renderer.
      */
+    @SuppressWarnings("WeakerAccess")
     public synchronized void addCurlMesh(CurlMesh mesh) {
         removeCurlMesh(mesh);
         mCurlMeshes.add(mesh);
@@ -65,6 +71,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
      * Returns rect reserved for left or right page. Value page should be
      * PAGE_LEFT or PAGE_RIGHT.
      */
+    @SuppressWarnings("WeakerAccess")
     public RectF getPageRect(int page) {
         if (page == PAGE_LEFT) {
             return mPageRectLeft;
@@ -137,14 +144,18 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
     /**
      * Removes CurlMesh from this renderer.
      */
+    @SuppressWarnings("WeakerAccess")
     public synchronized void removeCurlMesh(CurlMesh mesh) {
-        while (mCurlMeshes.remove(mesh))
-            ;
+        //noinspection StatementWithEmptyBody
+        while (mCurlMeshes.remove(mesh)){
+
+        }
     }
 
     /**
      * Change background/clear color.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setBackgroundColor(int color) {
         mBackgroundColor = color;
     }
@@ -153,6 +164,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
      * Set margins or padding. Note: margins are proportional. Meaning a value
      * of .1f will produce a 10% margin.
      */
+    @SuppressWarnings("WeakerAccess")
     public synchronized void setMargins(float left, float top, float right,
                                         float bottom) {
         mMargins.left = left;
@@ -166,6 +178,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
      * Sets visible page count to one or two. Should be either SHOW_ONE_PAGE or
      * SHOW_TWO_PAGES.
      */
+    @SuppressWarnings("WeakerAccess")
     public synchronized void setViewMode(int viewmode) {
         if (viewmode == SHOW_ONE_PAGE) {
             mViewMode = viewmode;
@@ -179,6 +192,7 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
     /**
      * Translates screen coordinates into view coordinates.
      */
+    @SuppressWarnings("WeakerAccess")
     public void translate(PointF pt) {
         pt.x = mViewRect.left + (mViewRect.width() * pt.x / mViewportWidth);
         pt.y = mViewRect.top - (-mViewRect.height() * pt.y / mViewportHeight);
@@ -188,40 +202,28 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
      * Recalculates page rectangles.
      */
     private void updatePageRects() {
-        if (mViewRect.width() == 0 || mViewRect.height() == 0) {
+        final float width = mViewRect.width();
+        final float height = mViewRect.height();
+        int bitmapW,bitmapH;
+
+        if (width == 0 || height == 0)
             return;
-        } else if (mViewMode == SHOW_ONE_PAGE) {
-            mPageRectRight.set(mViewRect);
-            mPageRectRight.left += mViewRect.width() * mMargins.left;
-            mPageRectRight.right -= mViewRect.width() * mMargins.right;
-            mPageRectRight.top += mViewRect.height() * mMargins.top;
-            mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
 
-            mPageRectLeft.set(mPageRectRight);
+        mPageRectLeft.set(mViewRect);
+        mPageRectRight.left += width * mMargins.left;
+        mPageRectRight.right -= width * mMargins.right;
+        mPageRectRight.top += height * mMargins.top;
+        mPageRectRight.bottom -= height * mMargins.bottom;
+        mPageRectLeft.set(mPageRectRight);
+        if (mViewMode == SHOW_ONE_PAGE) {
             mPageRectLeft.offset(-mPageRectRight.width(), 0);
-
-            int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
-                    .width());
-            int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
-                    .height());
-            mObserver.onPageSizeChanged(bitmapW, bitmapH);
-        } else if (mViewMode == SHOW_TWO_PAGES) {
-            mPageRectRight.set(mViewRect);
-            mPageRectRight.left += mViewRect.width() * mMargins.left;
-            mPageRectRight.right -= mViewRect.width() * mMargins.right;
-            mPageRectRight.top += mViewRect.height() * mMargins.top;
-            mPageRectRight.bottom -= mViewRect.height() * mMargins.bottom;
-
-            mPageRectLeft.set(mPageRectRight);
+        }else if (mViewMode == SHOW_TWO_PAGES) {
             mPageRectLeft.right = (mPageRectLeft.right + mPageRectLeft.left) / 2;
             mPageRectRight.left = mPageRectLeft.right;
-
-            int bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / mViewRect
-                    .width());
-            int bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / mViewRect
-                    .height());
-            mObserver.onPageSizeChanged(bitmapW, bitmapH);
         }
+        bitmapW = (int) ((mPageRectRight.width() * mViewportWidth) / width);
+        bitmapH = (int) ((mPageRectRight.height() * mViewportHeight) / height);
+        mObserver.onPageSizeChanged(bitmapW, bitmapH);
     }
 
     /**
@@ -232,18 +234,18 @@ public class CurlRenderer implements GLSurfaceView.Renderer {
          * Called from onDrawFrame called before rendering is started. This is
          * intended to be used for animation purposes.
          */
-        public void onDrawFrame();
+        void onDrawFrame();
 
         /**
          * Called once page size is changed. Width and height tell the page size
          * in pixels making it possible to update textures accordingly.
          */
-        public void onPageSizeChanged(int width, int height);
+        void onPageSizeChanged(int width, int height);
 
         /**
          * Called from onSurfaceCreated to enable texture re-initialization etc
          * what needs to be done when this happens.
          */
-        public void onSurfaceCreated();
+        void onSurfaceCreated();
     }
 }

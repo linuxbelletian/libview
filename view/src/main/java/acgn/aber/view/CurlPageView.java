@@ -241,7 +241,7 @@ public class CurlPageView extends GLSurfaceView
     @Override
     public void onDrawFrame() {
         // We are not animating.
-        if (mAnimate == false) {
+        if (!mAnimate) {
             return;
         }
 
@@ -447,6 +447,7 @@ public class CurlPageView extends GLSurfaceView
      * Set margins (or padding). Note: margins are proportional. Meaning a value
      * of .1f will produce a 10% margin.
      */
+    @SuppressWarnings("SameParameterValue")
     public void setMargins(float left, float top, float right, float bottom) {
         mRenderer.setMargins(left, top, right, bottom);
     }
@@ -759,7 +760,7 @@ public class CurlPageView extends GLSurfaceView
         /**
          * Return number of pages available.
          */
-        public int getPageCount();
+        int getPageCount();
 
         /**
          * Called once new bitmaps/textures are needed. Width and height are in
@@ -770,7 +771,7 @@ public class CurlPageView extends GLSurfaceView
          * <br/>
          * Index is a number between 0 and getBitmapCount() - 1.
          */
-        public void updatePage(CurlPage page, int width, int height, int index);
+        void updatePage(CurlPage page, int width, int height, int index);
     }
 
 
@@ -791,6 +792,6 @@ public class CurlPageView extends GLSurfaceView
         /**
          * Called once CurlView size changes.
          */
-        public void onSizeChanged(int width, int height);
+        void onSizeChanged(int width, int height);
     }
 }

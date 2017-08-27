@@ -23,13 +23,11 @@ public class CurlPage {
     private Bitmap mTextureFront;
     private boolean mTexturesChanged;
 
-    public CurlPage() {
-
-    }
 
     /**
      * Getter for color.
      * */
+    @SuppressWarnings("WeakerAccess")
     public int getColor(int side) {
         switch (side) {
             case SIDE_FRONT:
@@ -42,6 +40,7 @@ public class CurlPage {
 
     /**
      * Calculates the next highest power of two for a given integer.
+     * TODO: n = n | (n >> 32) need to be fixed
      * */
     private int getNextHighestPO2(int n) {
         n -= 1;
@@ -50,6 +49,7 @@ public class CurlPage {
         n = n | (n >> 4);
         n = n | (n >> 8);
         n = n | (n >> 16);
+        //noinspection ShiftOutOfRange
         n = n | (n >> 32);
         return n + 1;
     }
@@ -91,6 +91,7 @@ public class CurlPage {
      * filled with actual texture coordinates in this new upscaled texture
      * Bitmap.
      * */
+    @SuppressWarnings("WeakerAccess")
     public Bitmap getTexture(RectF textureRect, int side) {
         switch (side) {
             case SIDE_FRONT:
@@ -103,6 +104,7 @@ public class CurlPage {
     /**
      * Returns true if textures have changed.
      * */
+    @SuppressWarnings("WeakerAccess")
     public boolean getTexturesChanged() {
         return mTexturesChanged;
     }
@@ -111,6 +113,7 @@ public class CurlPage {
      * Returns true if back siding texture exists and it differs from
      *  front facing one.
      * */
+    @SuppressWarnings("WeakerAccess")
     public boolean hasBackTexture() {
         return !mTextureFront.equals(mTextureBack);
     }
@@ -118,6 +121,7 @@ public class CurlPage {
     /**
      * Recycles and frees underlying Bitmaps.
      * */
+    @SuppressWarnings("WeakerAccess")
     public void recycle() {
         if (mTextureFront != null) {
             mTextureFront.recycle();
@@ -137,6 +141,7 @@ public class CurlPage {
     /**
      * Resets this CurlPage into its initial state.
      * */
+    @SuppressWarnings("WeakerAccess")
     public void reset() {
         mColorBack = Color.WHITE;
         mColorFront = Color.WHITE;
